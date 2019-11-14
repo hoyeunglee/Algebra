@@ -1,0 +1,161 @@
+with(RegularChains);
+R := PolynomialRing([x, y, z]);
+p1 := x^2+5-2*x*z;
+p2 := z^3*y+x*y^2;
+p3 := -8*z^3+3*y^2;
+F := [p1, p2, p3];
+MainVariable(p1, PolynomialRing([x, y, z]));
+MainVariable(p1, PolynomialRing([z, y, x]));
+prem(p1, p2, x);
+prem(p2, p1, z);
+prem(p3, p2, y);
+premas := proc(P,A, PRing)
+local R, i, x;
+R := P;
+i := nops(A);
+while i <> 0 do
+ x := MainVariable(A[i], PRing);
+ R := prem(R, A[i],x);
+ i := i - 1:
+od:
+return R:
+end proc:
+
+B := [x^2-2*z*x+5, -8*z^3+3*y^2]:
+p2 := y^2*x+y*z^3;
+premas(p2, B, PolynomialRing([x, y, z]));
+
+remset := proc(P,A, PRing)
+local R, r, i, x, p;
+R := [];
+for p in P do
+ r := premas(p, A, PRing);
+ if r <> 0 then
+  R := [op(R), r]:
+ end if:
+od:
+return R:
+end proc:
+
+A := [x^2-2*z*x+5]:
+B := [x^2-2*z*x+5, -8*z^3+3*y^2]:
+F := [p1, p2, p3];
+remset(F, A, PolynomialRing([z, y, x]));
+remset(F, B, PolynomialRing([x, y, z]));
+
+basicset := proc(Pparam, PRing)
+local B, b, PP, pos, p, P:
+B := []:
+P := Pparam:
+while P <> [] do
+ member(min(map(x -> MainDegree(Rank(x, PRing),PRing), P)),map(x -> MainDegree(Rank(x, PRing),PRing), P),'pos'):
+ b := P[pos]:
+ B := [op(B), b]:
+ PP := []:
+ for p in P do
+  if remset(p, B, PRing) = [] then
+   PP := [op(PP), p]:
+  end if:
+ od:
+ P := PP:
+od:
+return B:
+end proc:
+
+basicset(F, PolynomialRing([z, y, x]));
+basicset(F, PolynomialRing([x, y, z]));
+
+charset := proc(Pparam, PRing)
+local R, C, P;
+R := Pparam:
+P := Pparam:
+while R <> [] do
+ C := basicset(P, PRing);
+ #print("C=",C);
+ R := remset(P, C, PRing);
+ #print("R=",R);
+ P := [op(P), op(R)]:
+ #print("P=",P);
+od:
+return C:
+end proc:
+charset(F, PolynomialRing([z, y, x]));
+
+basis:=proc(a,b,ord)
+local i,j,k1,k;k:={};
+for i in a do
+   #k1:=normalf(i,b,ord);
+   k1 := NormalForm(i, b, ord)
+   if(k1<>0) then 
+     k:=k union {k1};
+   end if;  
+end do;
+return k;
+end:   
+
+scs := proc(Pparam, PRing)
+local B, A, RR, R;
+P := Pparam:
+B := basicset(P, PRing);
+R := remset(P, B, PRing);
+if R = [] then
+ return B:
+end if:
+RR := 
+A := []:
+for RRR in RR do
+ A := [op(A), scs([op(P), op(RRR)])]
+od:
+return A:
+end proc:
+
+#PRing := PolynomialRing([z, y, x]):
+#member(min(map(x -> MainDegree(Rank(x, PRing),PRing), F)),map(x -> MainDegree(Rank(x, PRing),PRing), F),'pos')
+#member(1,[1,3,3],'pos');
+
+dprem := proc(F, G, PRing)
+local R:
+R := F:
+
+end proc:
+
+depend([x,y,z],[u,v,w]);
+
+leader(p, R);
+rank(p, R);
+initial(p, R);
+separant(p, R);
+
+dprem := proc(F, G, x, PRing)
+local R, theta, thetax, thetaG;
+R := F:
+thetax := leader(G, PRing);
+while remset(R, F, PRing) <> [] do
+theta := leader(R, PRing);
+R := prem(R, thetaG, theta, PRing)
+od:
+return R:
+end proc:
+
+dpremas := proc(Pparam, A)
+local R, x, F, AtoRwithoutdivisible, P:
+P := Pparam:
+R := P;
+while remset(R, A, PRing) <> [] do
+ AtoRwithoutdivisible := remset(A, R, PRing);
+ member(max(map(x -> MainDegree(Rank(x, PRing),PRing), AtoRwithoutdivisible)),map(x -> MainDegree(Rank(x, PRing),PRing), AtoRwithoutdivisible),'pos');
+ F := AtoRwithoutdivisible[pos]:
+ x := MainVariable(F, PRing);
+ R := dprem(R, F, x);
+od:
+return R:
+end proc:
+
+with(diffalg):
+#R := differential_ring(derivations = [t], ranking = [u]):
+R := differential_ring(ranking = [[x,y,r]], derivations = [t], notation = diff):
+p1 := m*x[2] + r*x;
+p2 := m*y[2] + r*y - g;
+p3 := x^2 + y^2 - l^2;
+dprem(p1, p3, x);
+
