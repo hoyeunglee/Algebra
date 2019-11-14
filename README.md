@@ -2,4 +2,4 @@
 
 Copied and Translated from Pesudo Algorithm of a book.
 
-For my dog
+For my dog which is stolen
