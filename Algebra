@@ -285,3 +285,38 @@ p2 := m*y[2] + r*y - g;
 p3 := x^2 + y^2 - l^2;
 dprem(p1, p3, x);
 
+
+
+
+
+
+
+PseudolDivisionCustom := proc(aparam, bparam, xparam)
+p1 := x^2+5-2*x*z;
+p2 := z^3*y+x*y^2;
+p3 := -8*z^3+3*y^2;
+aparam := p1:
+bparam := p2:
+xparam := x:
+a := aparam:
+b := bparam:
+r := a:
+n := degree(a, xparam):
+m := degree(b, xparam):
+q := [seq(0,i=0..n-m)]:
+for i from n-m by -1 to 0  do
+ if degree(r, xparam) = m + i then
+  q[i+1] := coeff(r, xparam, degree(r, xparam))/coeff(b, xparam, degree(b, xparam)):
+  r := r - q[i+1]*(x^i)*b:
+ else
+  q[i+1] := 0:
+ end if:
+od:
+qq := 0:
+for i from 0 to n-m do
+ qq := qq + q[i+1]*x^i:
+od:
+
+b*qq+r-a; #valid 0
+simplify(r);
+
