@@ -9,6 +9,51 @@ MainVariable(p1, PolynomialRing([z, y, x]));
 prem(p1, p2, x);
 prem(p2, p1, z);
 prem(p3, p2, y);
+
+premcustom := proc(Fparam,Gparam, MainVar)
+local R, G, F, lcg, lcr, dr, dg:
+R := Fparam:
+G := Gparam:
+F := Fparam:
+#p1 := x^2+5-2*x*z;
+#p2 := z^3*y+x*y^2;
+#p3 := -8*z^3+3*y^2;
+#R := p2:
+#G := p1:
+#F := p2:
+#MainVar := z:
+if degree(G,MainVar) = 0 then
+ print("return 0"):
+ return 0:
+elif degree(F, MainVar) < degree(G, MainVar) then 
+ print("return R"):
+ return R:
+end if:
+lcg := coeff(G, MainVar, degree(G, MainVar)):
+print("lcg",lcg):
+dg := degree(G, MainVar):
+print("dg",dg):
+while degree(R, MainVar) >= degree(G, MainVar) do
+  lcr := coeff(R, MainVar, degree(R, MainVar)):
+  print("lcr",lcr):
+  dr := degree(R, MainVar):
+  print("dr",dr):
+  R := simplify(lcg * R - lcr * G * (x^(dr - dg))):
+  print("R",R):
+od:
+return R:
+end proc:
+p1 := x^2+5-2*x*z;
+p2 := z^3*y+x*y^2;
+p3 := -8*z^3+3*y^2;
+prem(p1,p2,x);
+prem(p2,p1,z);
+prem(p3, p2, y);
+
+premcustom(p1,p2,x);
+premcustom(p2,p1,z); #why this looping
+premcustom(p3,p2,y);
+
 premas := proc(P,A, PRing)
 local R, i, x;
 R := P;
@@ -80,6 +125,87 @@ od:
 return C:
 end proc:
 charset(F, PolynomialRing([z, y, x]));
+
+
+
+
+
+geom := proc(param1, pointset, pronounce)
+
+
+end proc:
+
+pointset := [A, [0,0], B, [0,v_B], C, [u_C, v_C], DD, [x_D, y_D], OO, [x_O, y_O]];
+for i from 1 to nops(pointset)/2 do
+print(i, i+1);
+(pointset[i]):= pointset[i+1];
+od:
+
+A := [0,0]:
+B := [0,v_B]:
+C := [u_C, v_C]: 
+DD := [x_D, y_D]:
+OO := [x_O, y_O]:
+
+pronounceresult := []:
+pronouncelist := []:
+pronounce := [[para, DD, A, B, C], [para, DD, C, A, B], [coll, OO, A, C], [coll, OO, B, DD]], [[coll, A, B, C]],[[midpoint, OO, A, C]];
+for i from 1 to nops([pronounce]) do
+print(pronounce[i]);
+for j from 1 to nops(pronounce[i]) do
+print("*****",pronounce[i][j]);
+od:
+od:
+pronounce[1];
+pronounce[2];
+pronounce[3];
+
+pronounceresult := []:
+pronouncelist := []:
+for i from 1 to nops([pronounce]) do
+print(pronounce[i]);
+pronouncelist := []:
+for j from 1 to nops(pronounce[i]) do
+print("*****",pronounce[i][j]);
+if pronounce[i][j][1] = coll then
+pronouncelist := [op(pronouncelist), (pronounce[i][j][3+1][2] - pronounce[i][j][1+1][2])*(pronounce[i][j][2+1][1] - pronounce[i][j][1+1][1]) - (pronounce[i][j][3+1][1] - pronounce[i][j][1+1][1])*(pronounce[i][j][2+1][2] - pronounce[i][j][1+1][2])]:
+elif pronounce[i][j][1] = para then
+pronouncelist := [op(pronouncelist), (pronounce[i][j][4+1][2] - pronounce[i][j][3+1][2])*(pronounce[i][j][2+1][1] - pronounce[i][j][1+1][1]) - (pronounce[i][j][4+1][1] - pronounce[i][j][3+1][1])*(pronounce[i][j][2+1][2] - pronounce[i][j][1+1][2])]:
+elif pronounce[i][j][1] = perp then
+pronouncelist := [op(pronouncelist), (pronounce[i][j][4+1][2] - pronounce[i][j][3+1][2])*(pronounce[i][j][2+1][2] - pronounce[i][j][1+1][2]) + (pronounce[i][j][4+1][1] - pronounce[i][j][3+1][1])*(pronounce[i][j][2+1][1] - pronounce[i][j][1+1][1])]: 
+elif pronounce[i][j][1] = cong then
+pronouncelist := [op(pronouncelist), (pronounce[i][j][4+1][2] - pronounce[i][j][3+1][2])^2 + (pronounce[i][j][4+1][1] - pronounce[i][j][3+1][1])^2 - (pronounce[i][j][2+1][2] - pronounce[i][j][1+1][2])^2 - (pronounce[i][j][2+1][1] - pronounce[i][j][1+1][1])^2]:
+elif pronounce[i][j][1] = dis then
+pronouncelist := [op(pronouncelist), (pronounce[i][j][1+1][1] - pronounce[i][j][2+1][1])^2 + (pronounce[i][j][1+1][2] - pronounce[i][j][2+1][2])^2 - pronounce[i][j][3+1]^2]:
+elif pronounce[i][j][1] = midpoint then
+pronouncelist := [op(pronouncelist), [2*pronounce[i][j][1+1][1]-pronounce[i][j][3+1][1], 2*pronounce[i][j][1+1][2]-pronounce[i][j][3+1][2]]]:
+end if:
+print(pronouncelist[nops(pronouncelist)]);
+od:
+pronounceresult := [op(pronounceresult), expand(pronouncelist)]:
+od:
+pronounceresult;
+nops(pronounceresult);
+pronounceresult[1];
+pronounceresult[2];
+pronounceresult[3];
+
+A := [0,0]:
+B := [0,v_B]:
+C := [u_C, v_C]: 
+DD := [x_D, y_D]:
+OO := [x_O, y_O]:
+
+charset(pronounceresult[1], PolynomialRing([y_O, x_O, y_D, x_D, v_C, u_C, v_B, u_B, v_A, u_A]));
+
+
+
+
+
+
+
+
+
 
 basis:=proc(a,b,ord)
 local i,j,k1,k;k:={};
