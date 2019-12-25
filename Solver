@@ -1,0 +1,51 @@
+#page 26, 43
+with(Groebner):
+with(ListTools):
+with(combinat):
+
+premas := proc(P,A, PRing)
+local R, i, x;
+R := P;
+i := nops(A);
+while i <> 0 do
+ x := MainVariable(A[i], PRing);
+ R := prem(R, A[i],x);
+ i := i - 1:
+od:
+return R:
+end proc:
+
+Buchberger := proc(Fparam, PRing)
+#Fparam := [x*y-x, -y+x^2]:
+F := MakeUnique(Fparam):
+GG := choose(F, 2):
+G := F:
+while GG <> [] do
+f := GG[1][1]:
+g := GG[1][2]:
+GG := [seq(GG[i], i=2..nops(GG))]:
+#L := lcm(TrailingTerm(f, PRing)[2],TrailingTerm(g, PRing)[2]):
+#S := simplify(L/LeadingTerm(f, PRing)[2]*f - L/LeadingTerm(g, PRing)[2]*g);
+S := SPolynomial(f, g, PRing);
+#print("S",S);
+#print("G",G);
+# S reduce to G modulo h
+#h := premas(S, G, PolynomialRing([x, y, z]));
+h := Reduce(S, G, PRing, 'h');
+#print("h",h);
+if h = 0 then
+h := []:
+end if:
+if h <> [] then
+ GG := [op(GG), [SelectFirst(G), h]]:
+ G := [op(G), h]:
+end if:
+od:
+return G:
+end proc:
+sol := Buchberger([x*y-x, -y+x^2], plex(x, y));
+factor(sol[nops(sol)]);
+eliminate(sol,[x,y]);
+eliminate([x*y-x, -y+x^2],[x,y]);
+sol := Basis([x*y-x, -y+x^2], plex(x, y));
+solve([x*y-x, -y+x^2]);
