@@ -1,0 +1,126 @@
+page 115
+x(i),y(i)
+
+A1A2 and A3A4 parallel
+alpha := (x2 - x1)*(y4 - y3) - (y2 - y1)*(x4 - x3) = 0;
+
+3 points on the same line
+beta := Determinant(Matrix([[x1,y1,1],[x2,y2,1],[x3,y3,1]])) = 0;
+
+A1A2 perpendicular to A3A4
+k*(y2 - y1)*(y4 - y3) + (x2 - x1)*(x4 - x3) = 0;
+
+Descartes k = 1
+u1*x1 + u2*x2 + u3 = 0
+
+when u1 and u2 not zero at the same time
+same sign, point A and B at same side
+different sign, point A and B at different side
+u1*a1 + u2*a2 + u3 = 0
+u1*b1 + u2*b2 + u3 = 0
+
+A1A2 and A3A4 parallel
+A(0,0), B(u1,0), D(u2,u3), C(x1,x2), E(x3,x4)
+#BC = A1A2
+xx1 := u1:
+xx2 := x1:
+yy1 := 0:
+yy2 := x2:
+#AD = A3A4
+xx3 := 0:
+xx4 := u2:
+yy3 := 0:
+yy4 := u3:
+(xx2 - xx1)*(yy4 - yy3) - (yy2 - yy1)*(xx4 - xx3);
+(x1-u1)*u3-x2*u2
+
+#CD = A1A2
+xx1 := x1:
+xx2 := u2:
+yy1 := x2:
+yy2 := u3:
+#AB = A3A4
+xx3 := 0:
+xx4 := u1:
+yy3 := 0:
+yy4 := 0:
+(xx2 - xx1)*(yy4 - yy3) - (yy2 - yy1)*(xx4 - xx3);
+-(u3-x2)*u1
+
+with(LinearAlgebra):
+E is on the same line of AC
+xx1 := x3:
+yy1 := x4:
+xx2 := 0:
+yy2 := 0:
+xx3 := x1:
+yy3 := x2:
+Determinant(Matrix([[xx1,yy1,1],[xx2,yy2,1],[xx3,yy3,1]]));
+-x3*x2+x1*x4;
+
+E is on the same line of BD
+xx1 := x3:
+yy1 := x4:
+xx2 := u1:
+yy2 := 0:
+xx3 := u2:
+yy3 := u3:
+Determinant(Matrix([[xx1,yy1,1],[xx2,yy2,1],[xx3,yy3,1]]));
+-x3*u3+u1*u3-u1*x4+u2*x4;
+
+with(PolynomialIdeals):
+J := <(x1-u1)*u3-x2*u2,-(u3-x2)*u1,-x3*x2+x1*x4,-x3*u3+u1*u3-u1*x4+u2*x4>:
+EliminationIdeal(J, {x1,x2,x3,x4,u1,u2,u3});
+
+
+eliminate({(x1-u1)*u3-x2*u2,-(u3-x2)*u1,-x3*x2+x1*x4,-x3*u3+u1*u3-u1*x4+u2*x4},[x1,x2,x3,x4]);
+solve([(x1-u1)*u3-x2*u2,-(u3-x2)*u1,-x3*x2+x1*x4,-x3*u3+u1*u3-u1*x4+u2*x4],[x1,x2,x3,x4]);
+in this case, solve and eliminate have the same result
+
+solve([(x1-u1)*u3-x2*u2 = s,-(u3-x2)*u1 = s,-x3*x2+x1*x4 = s,-x3*u3+u1*u3-u1*x4+u2*x4 = s],[x1,x2,x3,x4]);
+
+[{x1 = u1+u2, x2 = u3, x3 = (1/2)*u1+(1/2)*u2, x4 = (1/2)*u3}, {}]
+
+page 192
+
+A(x1,0), B(x2,0),C(0,x3),D(x4,x5)
+with(LinearAlgebra):
+xx1 := x4:
+yy1 := x5:
+xx2 := 0:
+yy2 := x3:
+xx3 := 0:
+yy3 := 0:
+proveDCO := Determinant(Matrix([[xx1,yy1,1],[xx2,yy2,1],[xx3,yy3,1]])) = 0;
+prove x3*x4 = 0
+
+AD perpendicular BC
+A1A2 perpendicular to A3A4
+xx1 := x1:
+yy1 := 0:
+xx2 := x4:
+yy2 := x5:
+xx3 := x2:
+yy3 := 0:
+xx4 := 0:
+yy4 := x3:
+k*(yy2 - yy1)*(yy4 - yy3) + (xx2 - xx1)*(xx4 - xx3) = 0;
+k*x5*x3-(x4-x1)*x2 = 0;
+
+BD perpendicular AC
+A1A2 perpendicular to A3A4
+xx1 := x2:
+yy1 := 0:
+xx2 := x4:
+yy2 := x5:
+xx3 := x1:
+yy3 := 0:
+xx4 := 0:
+yy4 := x3:
+k*(yy2 - yy1)*(yy4 - yy3) + (xx2 - xx1)*(xx4 - xx3) = 0;
+k*x5*x3-(x4-x2)*x1 = 0
+
+with(Groebner):
+J := {k*x5*x3-(x4-x1)*x2, k*x5*x3-(x4-x2)*x1};
+eliminate(J, {x1,x2,x3,x4,x5});
+x4 = 0; # prove finished
